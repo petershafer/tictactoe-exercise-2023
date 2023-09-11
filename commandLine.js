@@ -1,5 +1,5 @@
 const tictactoe = require('./tictactoe');
-const { playbackGame } = require('./utils');
+const { playbackGame, randomGame } = require('./utils');
 const readline = require('node:readline/promises');
 const { stdin: input, stdout: output } = require('node:process');
 
@@ -36,7 +36,7 @@ const gameA = [
     ['x', [0,0]],
 ];
 
-playbackGame(gameA);
+// playbackGame(gameA);
 
 
 async function play () {
@@ -75,3 +75,6 @@ async function play () {
 
 }
 play();
+
+// randomGame();
+

@@ -21,6 +21,28 @@ function playbackGame (moveHistory) {
     return game;
 }
 
+const positions = () => [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]];
+
+function shuffle (arr) {
+    const orig = [...arr];
+    const shuffled = [];
+    while (orig.length > 0) {
+        shuffled.push(orig.splice(Math.floor(Math.random() * orig.length), 1)[0]);
+    }
+    return shuffled;
+}
+
+const mapToMoves = (positions) => positions.map((pos, i) => [i % 2 == 0 ? 'x' : 'o', pos]);
+
+const randomHistory = () => mapToMoves(shuffle(positions()));
+
+const randomGame = () => playbackGame(randomHistory())
+
 module.exports = {
     playbackGame,
+    shuffle,
+    positions,
+    mapToMoves,
+    randomHistory,
+    randomGame,
 };

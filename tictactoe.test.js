@@ -33,14 +33,7 @@ describe('game object', () => {
 
 describe('game outcomes', () => {
     it('Scenario #1 should result in an X win', () => {
-        const ScenarioOne = [
-            ['x', [0,0]],
-            ['o', [1,0]],
-            ['x', [0,1]],
-            ['o', [1,1]],
-            ['x', [0,2]],
-            ['o', [1,2]],
-        ];
+        const ScenarioOne = [['x', [0,0]], ['o', [1,0]], ['x', [0,1]], ['o', [1,1]], ['x', [0,2]], ['o', [1,2]]];
         const game = playbackGame(ScenarioOne);
         expect(game.isOver()).toBeTruthy();
         expect(game.winner()).toBe('x');
