@@ -133,6 +133,7 @@ const newGame = () => {
     let board = newBoard();
     let gameOver = false;
     let lastPlayer = null;
+    let firstPlayer = null;
     let winner = null;
     const history = [];
     return {
@@ -148,6 +149,7 @@ const newGame = () => {
             board = doMove(player, position, board);
             history.push([player, position]);
             lastPlayer = player;
+            firstPlayer = firstPlayer === null ? player : firstPlayer;
             const result = isWinningBoard(board, player);
             if (result !== false) {
                 winner = player;
@@ -161,6 +163,7 @@ const newGame = () => {
         getBoard: () => board,
         printBoard: () => printBoard(board),
         winner: () => winner,
+        export: () => ({ winner, firstPlayer, history: [...history]}),
     }
 };
 
