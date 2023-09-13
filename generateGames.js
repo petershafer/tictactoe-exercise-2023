@@ -7,10 +7,9 @@ for (let i = 0; i < 10; i++) {
     history = stripPlayerFromHistory(game.export().history);
     outcome = categorize(game);
     gameString = compressHistory(history);
-    console.log(`${JSON.stringify(outcome)}: ${gameString}`);
+    console.log([outcome, gameString]);
     decompressedHistory = decompressHistory(gameString);
     firstPlayer = game.export().firstPlayer;
     decompressedHistory = applyPlayersToHistory(decompressedHistory, firstPlayer);
-    console.log(decompressedHistory);
-    playbackGame(decompressedHistory);
+    playbackGame(decompressedHistory, false);
 }

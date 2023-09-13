@@ -86,9 +86,9 @@ const toOneDim = ([row,col]) => (row * 3) + col;
 
 const fromOneDim = (index) => [Math.floor(index / 3), Math.floor(index % 3)];
 
-const compressHistory = (history) => JSON.stringify(history.map(toOneDim));
+const compressHistory = (history) => history.map(toOneDim).join(',');
 
-const decompressHistory = (history) => JSON.parse(history).map(fromOneDim);
+const decompressHistory = (history) => history.split(',').map(val => val.trim()).map(fromOneDim);
 
 const stripPlayerFromHistory = (history) => history.map(([_, position]) => position);
 
