@@ -163,7 +163,7 @@ const newGame = () => {
         getBoard: () => board,
         printBoard: () => printBoard(board),
         winner: () => winner,
-        export: () => ({ winner, firstPlayer, history: [...history]}),
+        export: () => ({ winner, firstPlayer, board: [...board], history: [...history]}),
     }
 };
 

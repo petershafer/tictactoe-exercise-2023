@@ -1,19 +1,19 @@
 const tictactoe = require('./tictactoe');
 
-function playbackGame (moveHistory) {
+function playbackGame (moveHistory, verbose = true) {
     let game = tictactoe.newGame();
-    console.log(`Let's play a game.`);
+    verbose && console.log(`Let's play a game.`);
     let i = 0;
     while (i < moveHistory.length && !game.isOver()) {
-        console.log(`${moveHistory[i][0]} chooses position ${moveHistory[i][1]}`);
+        verbose && console.log(`${moveHistory[i][0]} chooses position ${moveHistory[i][1]}`);
         game.nextMove(...moveHistory[i]);
         if (game.isOver()) {
-            game.printBoard();
+            verbose && game.printBoard();
             if (game.winner() === null) {
-                console.log(`It's a draw game!`);
-                return null;
+                verbose && console.log(`It's a draw game!`);
+                return game;
             } else {
-                console.log(`${game.winner()} has won the game!`);
+                verbose && console.log(`${game.winner()} has won the game!`);
             }
         }
         i++;
@@ -32,13 +32,51 @@ function shuffle (arr) {
     return shuffled;
 }
 
+const getWinPatterns = () => ({
+    v1: [[true, null, null],[true, null, null],[true, null, null]],
+    v2: [[null, true, null],[null, true, null],[null, true, null]],
+    v3: [[null, null, true],[null, null, true],[null, null, true]],
+    h1: [[true, true, true],[null, null, null],[null, null, null]],
+    h2: [[null, null, null],[true, true, true],[null, null, null]],
+    h3: [[null, null, null],[null, null, null],[true, true, true]],
+    d1: [[true, null, null],[null, true, null],[null, null, true]],
+    d2: [[null, null, true],[null, true, null],[true, null, null]],
+});
+
+function categorize (game) {
+    if (!game.isOver()) {
+        throw new Error(`Game is not complete`);
+    }
+    const { history, winner, board } = game.export();
+    if (winner === null && history.length < 9) {
+        throw new Error(`Invalid game state`);
+    }
+    const filteredBoard = board.map(row => row.map(cell => cell === game.winner() ? true : null));
+    const winPatterns = getWinPatterns();
+    let matches;
+    for (const [label, pattern] of Object.entries(winPatterns)) {
+        matches = true;
+        for (let i = 0; i < pattern.length; i++) {
+            for (let j = 0; j < pattern[i].length; j++) {
+                if (pattern[i][j] === true && filteredBoard[i][j] === null) {
+                    matches = false;
+                }
+            }
+        }
+        if (matches) {
+            return label;
+        }
+    }
+    return 'draw';
+}
+
 const whichPlayer = (turn, firstPlayer) => turn % 2 == 0 ? firstPlayer : (firstPlayer === 'x' ? 'o' : 'x')
 
 const mapToMoves = (positions, firstPlayer = 'x') => positions.map((pos, i) => [whichPlayer(i, firstPlayer), pos]);
 
 const randomHistory = () => mapToMoves(shuffle(positions()));
 
-const randomGame = () => playbackGame(randomHistory())
+const randomGame = () => playbackGame(randomHistory(), false);
 
 const toOneDim = ([row,col]) => (row * 3) + col;
 
@@ -63,4 +101,6 @@ module.exports = {
     decompressHistory,
     stripPlayerFromHistory,
     applyPlayersToHistory,
+    getWinPatterns,
+    categorize,
 };
