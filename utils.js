@@ -53,6 +53,7 @@ function categorize (game) {
     }
     const filteredBoard = board.map(row => row.map(cell => cell === game.winner() ? true : null));
     const winPatterns = getWinPatterns();
+    const winLabels = [];
     let matches;
     for (const [label, pattern] of Object.entries(winPatterns)) {
         matches = true;
@@ -64,10 +65,13 @@ function categorize (game) {
             }
         }
         if (matches) {
-            return label;
+            winLabels.push(label);
         }
     }
-    return 'draw';
+    if (winLabels.length === 0) {
+        winLabels.push('draw');
+    }
+    return winLabels;
 }
 
 const whichPlayer = (turn, firstPlayer) => turn % 2 == 0 ? firstPlayer : (firstPlayer === 'x' ? 'o' : 'x')
