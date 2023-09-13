@@ -42,10 +42,10 @@ describe('game objects', () => {
             const game = playbackGame(ScenarioOne);
             const board = game.getBoard();
             expect(Array.isArray(board)).toBeTruthy();
-            expect(board.length).toBe(3);
+            expect(board).toHaveLength(3);
             board.forEach(row => {
                 expect(Array.isArray(row)).toBeTruthy();
-                expect(row.length).toBe(3);
+                expect(row).toHaveLength(3);
             });
         });
         it(`Should only contain the values 'x', 'o' or null`, () => {
@@ -124,6 +124,105 @@ describe('game objects', () => {
             expect(exObj).toHaveProperty('firstPlayer');
             expect(exObj).toHaveProperty('board');
             expect(exObj).toHaveProperty('history');
+        });
+        describe('winner field', () => {
+            it(`Should be 'x' when 'x' wins the game`, () => {
+                const ScenarioOne = [['x', [0,0]], ['o', [1,0]], ['x', [0,1]], ['o', [1,1]], ['x', [0,2]]];
+                const game = playbackGame(ScenarioOne);
+                expect(game.export().winner).toBe('x');
+            });
+            it(`Should be 'o' when 'o' wins the game`, () => {
+                const ScenarioOne = [['o', [0,0]], ['x', [1,0]], ['o', [0,1]], ['x', [1,1]], ['o', [0,2]]];
+                const game = playbackGame(ScenarioOne);
+                expect(game.export().winner).toBe('o');
+            });
+            it(`Should be null when the game is a draw`, () => {
+                const ScenarioOne = [
+                    ['o', [0,0]], ['x', [1,0]], ['o', [0,1]], ['x', [1,1]], ['o', [1,2]], ['x', [0,2]],
+                    ['o', [2,0]], ['x', [2,1]], ['o', [2,2]]
+                ];
+                const game = playbackGame(ScenarioOne);
+                expect(game.export().winner).toBeNull();
+            });
+            it(`Should be null when the game incomplete`, () => {
+                const ScenarioOne = [
+                    ['o', [0,0]], ['x', [1,0]], ['o', [0,1]], ['x', [1,1]], ['o', [1,2]], ['x', [0,2]],
+                    ['o', [2,0]], ['x', [2,1]]
+                ];
+                const game = playbackGame(ScenarioOne);
+                expect(game.export().winner).toBeNull();
+            });
+        });
+        describe('firstPlayer field', () => {
+            it(`should be 'x' if 'x' goes first`, () => {
+                const ScenarioOne = [['x', [0,0]]];
+                const game = playbackGame(ScenarioOne);
+                expect(game.export().firstPlayer).toBe('x');
+            });
+            it(`should be 'o' if 'o' goes first`, () => {
+                const ScenarioOne = [['o', [0,0]]];
+                const game = playbackGame(ScenarioOne);
+                expect(game.export().firstPlayer).toBe('o');
+            });
+            it(`should be null if the game hasn't started`, () => {
+                const ScenarioOne = [];
+                const game = playbackGame(ScenarioOne);
+                expect(game.export().firstPlayer).toBeNull();
+            });
+        });
+        describe('board field', () => {
+            it('Should return a two-dimensional 3x3 array', () => {
+                const ScenarioOne = [['x', [0,0]], ['o', [1,0]], ['x', [0,1]], ['o', [1,1]]];
+                const game = playbackGame(ScenarioOne);
+                const board = game.export().board;
+                expect(Array.isArray(board)).toBeTruthy();
+                expect(board).toHaveLength(3);
+                board.forEach(row => {
+                    expect(Array.isArray(row)).toBeTruthy();
+                    expect(row).toHaveLength(3);
+                });
+            });
+            it(`Should only contain the values 'x', 'o' or null`, () => {
+                const ScenarioOne = [['x', [0,0]], ['o', [1,0]], ['x', [0,1]], ['o', [1,1]]];
+                const game = playbackGame(ScenarioOne);
+                const board = game.export().board;
+                board.forEach(row => {
+                    row.forEach(value => {
+                        expect(['x', 'o', null].includes(value)).toBeTruthy();
+                    });
+                });
+            });
+        });
+        describe('history field', () => {
+            it('should be an array of pairs representing a player and position', () => {
+                const ScenarioOne = [['x', [0,0]], ['o', [1,0]], ['x', [0,1]], ['o', [1,1]], ['x', [0,2]]];
+                const game = playbackGame(ScenarioOne);
+                const history = game.export().history;
+                expect(Array.isArray(history)).toBeTruthy();
+                history.forEach(move => {
+                    expect(Array.isArray(move)).toBeTruthy();
+                    expect(move).toHaveLength(2);
+                    const [player, position] = move;
+                    expect(['x','o'].includes(player)).toBeTruthy();
+                    expect(Array.isArray(position)).toBeTruthy();
+                    expect(position).toHaveLength(2);
+                    const [row, col] = position;
+                    expect(typeof row).toBe('number');
+                    expect(typeof col).toBe('number');
+                });
+            });
+            it('should match the moves input for the game', () => {
+                const ScenarioOne = [['x', [0,0]], ['o', [1,0]], ['x', [0,1]], ['o', [1,1]], ['x', [0,2]]];
+                const game = playbackGame(ScenarioOne);
+                const history = game.export().history;
+                expect(history).toHaveLength(ScenarioOne.length);
+                ScenarioOne.forEach(([player, [row, col]], index) => {
+                    const [histPlayer, [histRow, histCol]] = history[index];
+                    expect(player).toMatch(histPlayer);
+                    expect(row).toBe(histRow);
+                    expect(col).toBe(histCol);
+                });
+            });
         });
     });
 });
