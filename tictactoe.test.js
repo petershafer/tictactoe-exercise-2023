@@ -13,7 +13,95 @@ describe('game objects', () => {
     const game = tictactoe.newGame();
     expect(typeof game.nextMove).toBe('function');
   });
-  describe('nextMove function', () => {});
+  describe('nextMove function', () => {
+    it('Should update the board appropriately', () => {
+      const ScenarioOne = [['x', [0, 0]]];
+      const game = playbackGame(ScenarioOne);
+      expect(game.getBoard()).toEqual([
+        ['x', null, null],
+        [null, null, null],
+        [null, null, null],
+      ]);
+    });
+    it('Should not allow a player to claim an occupied space', () => {
+      const game = tictactoe.newGame();
+      game.nextMove('x', [0, 0]);
+      expect(() => {
+        game.nextMove('o', [0, 0]);
+      }).toThrow(new Error(`Position not null`));
+      expect(game.getBoard()).toEqual([
+        ['x', null, null],
+        [null, null, null],
+        [null, null, null],
+      ]);
+    });
+    it('Should not allow a player to play two moves in a row', () => {
+      const game = tictactoe.newGame();
+      game.nextMove('x', [0, 0]);
+      game.nextMove('x', [0, 1]);
+      expect(game.getBoard()).toEqual([
+        ['x', null, null],
+        [null, null, null],
+        [null, null, null],
+      ]);
+    });
+    it('Should not allow a player to claim an illegal position', () => {
+      const game = tictactoe.newGame();
+      const startingBoard = [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ];
+      expect(() => {
+        game.nextMove('x', [-1, -1]);
+      }).toThrow(new Error(`Invalid position`));
+      expect(game.getBoard()).toEqual(startingBoard);
+      expect(() => {
+        game.nextMove('x', [3, 3]);
+      }).toThrow(new Error(`Invalid position`));
+      expect(game.getBoard()).toEqual(startingBoard);
+      expect(() => {
+        game.nextMove('x', [0, -1]);
+      }).toThrow(new Error(`Invalid position`));
+      expect(game.getBoard()).toEqual(startingBoard);
+      expect(() => {
+        game.nextMove('x', [-1, 0]);
+      }).toThrow(new Error(`Invalid position`));
+      expect(game.getBoard()).toEqual(startingBoard);
+    });
+    it('Should not allow a player to make a move after the game is over', () => {
+      const ScenarioOne = [
+        ['x', [0, 0]],
+        ['o', [1, 0]],
+        ['x', [0, 1]],
+        ['o', [1, 1]],
+        ['x', [0, 2]],
+      ];
+      const game = playbackGame(ScenarioOne);
+      game.nextMove('o', [1, 2]);
+      expect(game.getBoard()).toEqual([
+        ['x', 'x', 'x'],
+        ['o', 'o', null],
+        [null, null, null],
+      ]);
+    });
+    it(`Should only allow player 'x' and 'o' to make moves`, () => {
+      const game = tictactoe.newGame();
+      game.nextMove('x', [0, 0]);
+      game.nextMove('o', [0, 1]);
+      expect(() => {
+        game.nextMove('0', [0, 2]);
+      }).toThrow(new Error('Invalid player'));
+      expect(() => {
+        game.nextMove(0, [0, 2]);
+      }).toThrow(new Error('Invalid player'));
+      expect(game.getBoard()).toEqual([
+        ['x', 'o', null],
+        [null, null, null],
+        [null, null, null],
+      ]);
+    });
+  });
   it('Should have isOver function', () => {
     const game = tictactoe.newGame();
     expect(typeof game.isOver).toBe('function');
