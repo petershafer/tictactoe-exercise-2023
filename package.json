@@ -7,6 +7,7 @@
     "play": "node commandLine.js",
     "build": "webpack",
     "serve": "webpack && npx serve serve/",
+    "generate": "node generateGames.js",
     "test": "jest"
   },
   "author": "",

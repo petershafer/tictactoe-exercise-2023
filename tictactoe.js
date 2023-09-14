@@ -111,6 +111,9 @@ const doMove = (player, [row, column], board) => {
   if (!Number.isInteger(row) || !Number.isInteger(column)) {
     throw new Error(`Invalid position`);
   }
+  if (board[row] === undefined || board[row][column] === undefined) {
+    throw new Error(`Invalid position`);
+  }
   if (player !== 'x' && player !== 'o') {
     throw new Error(`Invalid player`);
   }
@@ -162,7 +165,12 @@ const newGame = () => {
     getBoard: () => board,
     printBoard: () => printBoard(board),
     winner: () => winner,
-    export: () => ({ winner, firstPlayer, history: [...history] }),
+    export: () => ({
+      winner,
+      firstPlayer,
+      board: [...board],
+      history: [...history],
+    }),
   };
 };
 
