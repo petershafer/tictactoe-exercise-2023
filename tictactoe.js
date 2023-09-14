@@ -1,18 +1,17 @@
 // Generate 2D array that is 3x3 and defaulted to null values.
 const newBoard = () => Array(3).fill(Array(3).fill(null));
 
-const winsByRow = () => {
+const winsByRow = () =>
   // Generate boards with winning patterns for the given rows.
-  return [0, 1, 2].map((row) => {
+  [0, 1, 2].map((row) => {
     const board = newBoard();
     board[row] = [true, true, true];
     return board;
   });
-};
 
-const winsByColumn = () => {
-  // Generate boards with winning patterns for the given columns.
-  return [0, 1, 2].map((column) => {
+// Generate boards with winning patterns for the given columns.
+const winsByColumn = () =>
+  [0, 1, 2].map((column) => {
     const board = newBoard();
     return board.map((row) => {
       const newRow = [...row];
@@ -20,7 +19,6 @@ const winsByColumn = () => {
       return newRow;
     });
   });
-};
 
 // Generate boards with winning diagonal patterns.
 const winsByDiag = () => [
@@ -36,11 +34,11 @@ const winningBoards = [...winsByRow(), ...winsByColumn(), ...winsByDiag()];
 
 // Check shape and values of board for validity.
 const validateBoard = (board) => {
-  if (!board || !board.length || board.length != 3) {
+  if (!board || !board.length || board.length !== 3) {
     throw new Error(`Invalid board`);
   }
   board.forEach((row) => {
-    if (!row || !row.length || row.length != 3) {
+    if (!row || !row.length || row.length !== 3) {
       throw new Error(`Invalid board`);
     }
     if (
@@ -59,15 +57,14 @@ const normalizeBoardForPlayer = (board, player) => {
     console.log(player);
     throw new Error(`Invalid player`);
   }
-  return board.map((row) => {
-    return row.map((column) => {
+  return board.map((row) =>
+    row.map((column) => {
       if (column === player) {
         return true;
-      } else {
-        return null;
       }
-    });
-  });
+      return null;
+    })
+  );
 };
 
 // Compare a filtered game board with a board representing a minimum winning pattern.
@@ -98,7 +95,7 @@ const isWinningBoard = (gameBoard, player) => {
 const printBoard = (board) => {
   console.log(
     board
-      .map((row, i) =>
+      .map((row) =>
         row.map((place) => (place === null ? '-' : place)).join(' ')
       )
       .join('\n')
@@ -144,7 +141,7 @@ const newGame = () => {
         console.log(`The game is over!`);
         return;
       }
-      if (player == lastPlayer) {
+      if (player === lastPlayer) {
         console.log(`${player} already went. Please wait.`);
         return;
       }
