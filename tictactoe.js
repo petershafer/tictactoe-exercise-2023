@@ -1,21 +1,22 @@
 "use strict";
 // Generate 2D array that is 3x3 and defaulted to null values.
 const newBoard = () => Array(3).fill(Array(3).fill(null));
+const newPatternBoard = () => Array(3).fill(Array(3).fill(null));
 const winsByRow = () => 
 // Generate boards with winning patterns for the given rows.
 [0, 1, 2].map((row) => {
-    const board = newBoard();
+    const board = newPatternBoard();
     board[row] = [true, true, true];
     return board;
 });
 // Generate boards with winning patterns for the given columns.
 const winsByColumn = () => [0, 1, 2].map((column) => {
-    const board = newBoard();
-    return board.map((row) => {
+    const board = newPatternBoard().map((row) => {
         const newRow = [...row];
         newRow[column] = true;
         return newRow;
     });
+    return board;
 });
 // Generate boards with winning diagonal patterns.
 const winsByDiag = () => [
@@ -36,7 +37,9 @@ const validateBoard = (board) => {
         if (!row || !row.length || row.length !== 3) {
             throw new Error(`Invalid board`);
         }
-        if (!row.every((cell) => cell === 'x' || cell === 'o' || cell === null || cell === true)) {
+        if (
+        // @ts-ignore: Unreachable code error
+        !row.every((cell) => cell === 'x' || cell === 'o' || cell === null || cell === true)) {
             throw new Error(`Invalid board`);
         }
     });
@@ -47,12 +50,15 @@ const normalizeBoardForPlayer = (board, player) => {
         console.log(player);
         throw new Error(`Invalid player`);
     }
-    return board.map((row) => row.map((column) => {
-        if (column === player) {
-            return true;
-        }
-        return null;
-    }));
+    const newBoard = board.map((row) => {
+        return row.map((column) => {
+            if (column === player) {
+                return true;
+            }
+            return null;
+        });
+    });
+    return newBoard;
 };
 // Compare a filtered game board with a board representing a minimum winning pattern.
 // If the given pattern board is contained within the game board, return true.
@@ -75,11 +81,14 @@ const isWinningBoard = (gameBoard, player) => {
 // Print the board as a string to the console.
 const printBoard = (board) => {
     console.log(board
-        .map((row) => row.map((place) => (place === null ? '-' : place)).join(' '))
+        .map((row) => row
+        .map((place) => (place === null ? '-' : place))
+        .join(' '))
         .join('\n'));
 };
 // Create a new board object representing the board state given a player move.
-const doMove = (player, [row, column], board) => {
+const doMove = (player, position, board) => {
+    const [row, column] = position;
     validateBoard(board);
     if (row === undefined || column === undefined) {
         throw new Error(`Invalid position`);
