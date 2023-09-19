@@ -21,6 +21,14 @@ interface GridType<T> {
   importGrid: (values: T[][]) => void;
   exportValues: () => T[];
   importValues: (values: T[]) => void;
+  map: (fn: (value: T, position: Coordinates) => T) => void;
+  forEach: (fn: (value: T, position: Coordinates) => void) => void;
+  duplicate: () => Grid<T>;
+  contains: (
+    other: Grid<unknown>,
+    comparator?: (otherValue: unknown, containerValue: unknown) => boolean
+  ) => boolean;
+  reset: () => void;
 }
 
 export class Grid<T> implements GridType<T> {
@@ -210,6 +218,48 @@ export class Grid<T> implements GridType<T> {
       throw new Error(`Invalid grid value`);
     }
     this.#values = [...values];
+  }
+
+  map(fn: (value: T, position: Coordinates) => T) {
+    for (let i = 0; i < this.#rows; i++) {
+      for (let j = 0; j < this.#columns; j++) {
+        this.setPosition([i, j], fn(this.getPosition([i, j]), [i, j]));
+      }
+    }
+  }
+
+  forEach(fn: (value: T, position: Coordinates) => void) {
+    for (let i = 0; i < this.#rows; i++) {
+      for (let j = 0; j < this.#columns; j++) {
+        fn(this.getPosition([i, j]), [i, j]);
+      }
+    }
+  }
+
+  duplicate() {
+    const newGrid = new Grid<T>(this.#rows, this.#columns);
+    newGrid.importValues(this.exportValues());
+    return newGrid;
+  }
+
+  contains(
+    other: Grid<unknown>,
+    comparator?: (otherValue: unknown, containerValue: unknown) => boolean
+  ) {
+    let contains = true;
+    other.forEach((value, [row, column]) => {
+      if (comparator) {
+        contains =
+          contains && comparator(value, this.getPosition([row, column]));
+      } else if (value !== undefined) {
+        contains = contains && value === this.getPosition([row, column]);
+      }
+    });
+    return contains;
+  }
+
+  reset() {
+    this.#values = Array(this.#rows * this.#columns);
   }
 }
 

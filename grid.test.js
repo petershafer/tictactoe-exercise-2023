@@ -213,6 +213,176 @@ describe('Grid Class', () => {
       [7, 8, 9],
     ]);
   });
+  describe('map()', () => {
+    it('should apply specified function to all values', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      myGrid.map((value) => {
+        return 10 - value;
+      });
+      expect(myGrid.exportGrid()).toEqual([
+        [9, 8, 7],
+        [6, 5, 4],
+        [3, 2, 1],
+      ]);
+    });
+    it('should provide the correct row and column values', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.map((value, position) => {
+        return position;
+      });
+      expect(myGrid.exportGrid()).toEqual([
+        [
+          [0, 0],
+          [0, 1],
+          [0, 2],
+        ],
+        [
+          [1, 0],
+          [1, 1],
+          [1, 2],
+        ],
+        [
+          [2, 0],
+          [2, 1],
+          [2, 2],
+        ],
+      ]);
+    });
+  });
+  describe('forEach()', () => {
+    it('should apply the specified function for every value', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const values = [];
+      myGrid.forEach((value, [row, column]) => {
+        values.push(value);
+      });
+      expect(values).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    });
+    it('should provide the correct row and column values', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.map((value, position) => {
+        return position;
+      });
+      expect(myGrid.exportGrid()).toEqual([
+        [
+          [0, 0],
+          [0, 1],
+          [0, 2],
+        ],
+        [
+          [1, 0],
+          [1, 1],
+          [1, 2],
+        ],
+        [
+          [2, 0],
+          [2, 1],
+          [2, 2],
+        ],
+      ]);
+    });
+  });
+  describe('duplicate()', () => {
+    it('should create an exact duplicate of the original grid', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const newGrid = myGrid.duplicate();
+      expect(myGrid).not.toBe(newGrid);
+      expect(newGrid.exportGrid()).toEqual(myGrid.exportGrid());
+    });
+  });
+  describe('contains()', () => {
+    it('should return true if a grid is contained', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const myOtherGrid = new Grid(3, 3);
+      myOtherGrid.setIndex(0, 1);
+      expect(myGrid.contains(myOtherGrid)).toBeTruthy();
+    });
+    it('should return true if a grid is contained, using comparator', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const myOtherGrid = new Grid(3, 3);
+      myOtherGrid.fill(null);
+      myOtherGrid.setIndex(0, 1);
+      const comparator = (otherValue, value) => {
+        if (otherValue !== null) {
+          return otherValue === value;
+        }
+        return true;
+      };
+      expect(myGrid.contains(myOtherGrid, comparator)).toBeTruthy();
+    });
+    it('should return true if grids match', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const myOtherGrid = new Grid(3, 3);
+      myOtherGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      expect(myGrid.contains(myOtherGrid)).toBeTruthy();
+    });
+    it('should return true if grids match, using comparator', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const myOtherGrid = new Grid(3, 3);
+      myOtherGrid.importValues(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+      const comparator = (otherValue, containerValue) => {
+        return parseInt(otherValue) === parseInt(containerValue);
+      };
+      expect(myGrid.contains(myOtherGrid, comparator)).toBeTruthy();
+    });
+    it('should return false if other grid has more values than this one', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.setIndex(0, 0);
+      const myOtherGrid = new Grid(3, 3);
+      myOtherGrid.setIndex(0, 0);
+      myOtherGrid.setIndex(1, 1);
+      expect(myGrid.contains(myOtherGrid)).toBeFalsy();
+    });
+    it('should return false if other grid has more values than this one, using comparator', () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.setIndex(0, 0);
+      const myOtherGrid = new Grid(3, 3);
+      myOtherGrid.fill(null);
+      myOtherGrid.setIndex(0, 0);
+      myOtherGrid.setIndex(1, 1);
+      const comparator = (otherValue, value) => {
+        if (otherValue !== null) {
+          return otherValue === value;
+        }
+        return true;
+      };
+      expect(myGrid.contains(myOtherGrid, comparator)).toBeFalsy();
+    });
+    it("should return false if grids don't match", () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const myOtherGrid = new Grid(3, 3);
+      myOtherGrid.importValues([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+      expect(myGrid.contains(myOtherGrid)).toBeFalsy();
+    });
+    it("should return false if grids don't match, using comparator", () => {
+      const myGrid = new Grid(3, 3);
+      myGrid.importValues([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const myOtherGrid = new Grid(3, 3);
+      myOtherGrid.fill(null);
+      myOtherGrid.importValues([9, 8, 7, 6, 5, 4, 3, 2, 1]);
+      const comparator = (otherValue, value) => {
+        if (otherValue !== null) {
+          return otherValue === value;
+        }
+        return true;
+      };
+      expect(myGrid.contains(myOtherGrid, comparator)).toBeFalsy();
+    });
+  });
+  describe('reset()', () => {
+    const myGrid = new Grid(3, 3);
+    myGrid.forEach((value) => {
+      expect(value).not.toBeDefined();
+    });
+  });
 });
 
 describe('Grid3x3 Class', () => {

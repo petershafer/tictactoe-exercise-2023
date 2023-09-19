@@ -180,6 +180,41 @@ class Grid {
         }
         __classPrivateFieldSet(this, _Grid_values, [...values], "f");
     }
+    map(fn) {
+        for (let i = 0; i < __classPrivateFieldGet(this, _Grid_rows, "f"); i++) {
+            for (let j = 0; j < __classPrivateFieldGet(this, _Grid_columns, "f"); j++) {
+                this.setPosition([i, j], fn(this.getPosition([i, j]), [i, j]));
+            }
+        }
+    }
+    forEach(fn) {
+        for (let i = 0; i < __classPrivateFieldGet(this, _Grid_rows, "f"); i++) {
+            for (let j = 0; j < __classPrivateFieldGet(this, _Grid_columns, "f"); j++) {
+                fn(this.getPosition([i, j]), [i, j]);
+            }
+        }
+    }
+    duplicate() {
+        const newGrid = new Grid(__classPrivateFieldGet(this, _Grid_rows, "f"), __classPrivateFieldGet(this, _Grid_columns, "f"));
+        newGrid.importValues(this.exportValues());
+        return newGrid;
+    }
+    contains(other, comparator) {
+        let contains = true;
+        other.forEach((value, [row, column]) => {
+            if (comparator) {
+                contains =
+                    contains && comparator(value, this.getPosition([row, column]));
+            }
+            else if (value !== undefined) {
+                contains = contains && value === this.getPosition([row, column]);
+            }
+        });
+        return contains;
+    }
+    reset() {
+        __classPrivateFieldSet(this, _Grid_values, Array(__classPrivateFieldGet(this, _Grid_rows, "f") * __classPrivateFieldGet(this, _Grid_columns, "f")), "f");
+    }
 }
 exports.Grid = Grid;
 _Grid_values = new WeakMap(), _Grid_rows = new WeakMap(), _Grid_columns = new WeakMap();

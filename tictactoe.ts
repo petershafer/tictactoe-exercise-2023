@@ -1,3 +1,4 @@
+import { Grid3x3 } from './grid';
 /**
  * NOTES:
  * Type assertions are used here where the map function is applied to a tuple.

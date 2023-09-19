@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // Generate 2D array that is 3x3 and defaulted to null values.
 const newBoard = () => Array(3).fill(Array(3).fill(null));
 const newPatternBoard = () => Array(3).fill(Array(3).fill(null));
