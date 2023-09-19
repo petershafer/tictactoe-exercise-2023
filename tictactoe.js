@@ -89,8 +89,11 @@ const printBoard = (board) => {
 };
 // Create a new board object representing the board state given a player move.
 const doMove = (player, position, board) => {
-    const [row, column] = position;
     validateBoard(board);
+    if (position === undefined || !Array.isArray(position)) {
+        throw new Error(`Invalid position`);
+    }
+    const [row, column] = position;
     if (row === undefined || column === undefined) {
         throw new Error(`Invalid position`);
     }
@@ -168,7 +171,7 @@ module.exports = {
         normalizeBoardForPlayer,
         validateBoard,
         winningBoards,
-        getBoard: newBoard,
+        newBoard,
     },
 };
 //# sourceMappingURL=tictactoe.js.map
