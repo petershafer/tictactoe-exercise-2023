@@ -10,182 +10,186 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _grid_values, _grid_rows, _grid_columns;
 Object.defineProperty(exports, "__esModule", { value: true });
-class grid {
-    constructor(rows, columns) {
-        _grid_values.set(this, Array());
-        _grid_rows.set(this, void 0);
-        _grid_columns.set(this, void 0);
-        if (typeof rows !== 'number' || typeof columns !== 'number') {
-            throw new Error(`Invalid grid dimensions`);
+function MakeGridClass(defaultValue) {
+    var _grid_values, _grid_rows, _grid_columns;
+    class grid {
+        constructor(rows, columns) {
+            _grid_values.set(this, void 0);
+            _grid_rows.set(this, void 0);
+            _grid_columns.set(this, void 0);
+            if (typeof rows !== 'number' || typeof columns !== 'number') {
+                throw new Error(`Invalid grid dimensions`);
+            }
+            if ((rows && rows < 1) || (columns && columns < 1)) {
+                throw new Error(`Invalid grid dimensions`);
+            }
+            __classPrivateFieldSet(this, _grid_rows, rows, "f");
+            __classPrivateFieldSet(this, _grid_columns, columns, "f");
+            __classPrivateFieldSet(this, _grid_values, Array(rows * columns).fill(defaultValue), "f");
         }
-        if ((rows && rows < 1) || (columns && columns < 1)) {
-            throw new Error(`Invalid grid dimensions`);
+        setPosition(position, value) {
+            const [row, column] = position;
+            if (typeof row !== 'number' || typeof column !== 'number') {
+                throw new Error(`Invalid grid position`);
+            }
+            if ((row && (row < 1 || row >= __classPrivateFieldGet(this, _grid_rows, "f"))) ||
+                (column && (column < 1 || column >= __classPrivateFieldGet(this, _grid_columns, "f")))) {
+                throw new Error(`Invalid grid position`);
+            }
+            __classPrivateFieldGet(this, _grid_values, "f")[row * __classPrivateFieldGet(this, _grid_rows, "f") + column] = value;
         }
-        __classPrivateFieldSet(this, _grid_rows, rows, "f");
-        __classPrivateFieldSet(this, _grid_columns, columns, "f");
-    }
-    setPosition(position, value) {
-        const [row, column] = position;
-        if (typeof row !== 'number' || typeof column !== 'number') {
-            throw new Error(`Invalid grid position`);
+        getPosition(position) {
+            const [row, column] = position;
+            if (typeof row !== 'number' || typeof column !== 'number') {
+                throw new Error(`Invalid grid position`);
+            }
+            if ((row && (row < 1 || row >= __classPrivateFieldGet(this, _grid_rows, "f"))) ||
+                (column && (column < 1 || column >= __classPrivateFieldGet(this, _grid_columns, "f")))) {
+                throw new Error(`Invalid grid position`);
+            }
+            return __classPrivateFieldGet(this, _grid_values, "f")[row * __classPrivateFieldGet(this, _grid_rows, "f") + column];
         }
-        if ((row && (row < 1 || row >= __classPrivateFieldGet(this, _grid_rows, "f"))) ||
-            (column && (column < 1 || column >= __classPrivateFieldGet(this, _grid_columns, "f")))) {
-            throw new Error(`Invalid grid position`);
+        getRow(row) {
+            if (typeof row !== 'number') {
+                throw new Error(`Invalid grid row`);
+            }
+            if (row < 1 || row >= __classPrivateFieldGet(this, _grid_rows, "f")) {
+                throw new Error(`Invalid grid row`);
+            }
+            const start = row * __classPrivateFieldGet(this, _grid_columns, "f");
+            return __classPrivateFieldGet(this, _grid_values, "f").slice(start, __classPrivateFieldGet(this, _grid_columns, "f"));
         }
-        __classPrivateFieldGet(this, _grid_values, "f")[row * __classPrivateFieldGet(this, _grid_rows, "f") + column] = value;
-    }
-    getPosition(position) {
-        const [row, column] = position;
-        if (typeof row !== 'number' || typeof column !== 'number') {
-            throw new Error(`Invalid grid position`);
+        setRow(row, values) {
+            if (typeof row !== 'number') {
+                throw new Error(`Invalid grid row`);
+            }
+            if (row < 1 || row >= __classPrivateFieldGet(this, _grid_rows, "f")) {
+                throw new Error(`Invalid grid row`);
+            }
+            if (!Array.isArray(values)) {
+                throw new Error(`Invalid row values`);
+            }
+            if (values.length !== __classPrivateFieldGet(this, _grid_columns, "f")) {
+                throw new Error(`Invalid row values`);
+            }
+            const start = row * __classPrivateFieldGet(this, _grid_columns, "f");
+            __classPrivateFieldGet(this, _grid_values, "f").splice(start, __classPrivateFieldGet(this, _grid_columns, "f"), ...values);
         }
-        if ((row && (row < 1 || row >= __classPrivateFieldGet(this, _grid_rows, "f"))) ||
-            (column && (column < 1 || column >= __classPrivateFieldGet(this, _grid_columns, "f")))) {
-            throw new Error(`Invalid grid position`);
+        getRows() {
+            const rows = [];
+            for (let i = 0; i < __classPrivateFieldGet(this, _grid_rows, "f"); i++) {
+                rows[i] = this.getRow(i);
+            }
+            return rows;
         }
-        return __classPrivateFieldGet(this, _grid_values, "f")[row * __classPrivateFieldGet(this, _grid_rows, "f") + column];
-    }
-    getRow(row) {
-        if (typeof row !== 'number') {
-            throw new Error(`Invalid grid row`);
+        getColumn(column) {
+            if (typeof column !== 'number') {
+                throw new Error(`Invalid grid row`);
+            }
+            if (column < 1 || column >= __classPrivateFieldGet(this, _grid_columns, "f")) {
+                throw new Error(`Invalid grid row`);
+            }
+            const columnVals = [];
+            for (let i = 0; i < __classPrivateFieldGet(this, _grid_rows, "f"); i++) {
+                columnVals[i] = __classPrivateFieldGet(this, _grid_values, "f")[i * __classPrivateFieldGet(this, _grid_columns, "f") + column];
+            }
+            return columnVals;
         }
-        if (row < 1 || row >= __classPrivateFieldGet(this, _grid_rows, "f")) {
-            throw new Error(`Invalid grid row`);
-        }
-        const start = row * __classPrivateFieldGet(this, _grid_columns, "f");
-        return __classPrivateFieldGet(this, _grid_values, "f").slice(start, __classPrivateFieldGet(this, _grid_columns, "f"));
-    }
-    setRow(row, values) {
-        if (typeof row !== 'number') {
-            throw new Error(`Invalid grid row`);
-        }
-        if (row < 1 || row >= __classPrivateFieldGet(this, _grid_rows, "f")) {
-            throw new Error(`Invalid grid row`);
-        }
-        if (!Array.isArray(values)) {
-            throw new Error(`Invalid row values`);
-        }
-        if (values.length !== __classPrivateFieldGet(this, _grid_columns, "f")) {
-            throw new Error(`Invalid row values`);
-        }
-        const start = row * __classPrivateFieldGet(this, _grid_columns, "f");
-        __classPrivateFieldGet(this, _grid_values, "f").splice(start, __classPrivateFieldGet(this, _grid_columns, "f"), ...values);
-    }
-    getRows() {
-        const rows = [];
-        for (let i = 0; i < __classPrivateFieldGet(this, _grid_rows, "f"); i++) {
-            rows[i] = this.getRow(i);
-        }
-        return rows;
-    }
-    getColumn(column) {
-        if (typeof column !== 'number') {
-            throw new Error(`Invalid grid row`);
-        }
-        if (column < 1 || column >= __classPrivateFieldGet(this, _grid_columns, "f")) {
-            throw new Error(`Invalid grid row`);
-        }
-        const columnVals = [];
-        for (let i = 0; i < __classPrivateFieldGet(this, _grid_rows, "f"); i++) {
-            columnVals[i] = __classPrivateFieldGet(this, _grid_values, "f")[i * __classPrivateFieldGet(this, _grid_columns, "f") + column];
-        }
-        return columnVals;
-    }
-    setColumn(column, values) {
-        if (typeof column !== 'number') {
-            throw new Error(`Invalid grid column`);
-        }
-        if (column < 1 || column >= __classPrivateFieldGet(this, _grid_columns, "f")) {
-            throw new Error(`Invalid grid column`);
-        }
-        if (!Array.isArray(values)) {
-            throw new Error(`Invalid column values`);
-        }
-        if (values.length !== __classPrivateFieldGet(this, _grid_rows, "f")) {
-            throw new Error(`Invalid column values`);
-        }
-        for (let i = 0; i < __classPrivateFieldGet(this, _grid_rows, "f"); i++) {
-            __classPrivateFieldGet(this, _grid_values, "f")[i * __classPrivateFieldGet(this, _grid_columns, "f") + column] = values[i];
-        }
-    }
-    getColumns() {
-        const columns = [];
-        for (let i = 0; i < __classPrivateFieldGet(this, _grid_columns, "f"); i++) {
-            columns[i] = this.getColumn(i);
-        }
-        return columns;
-    }
-    setIndex(index, value) {
-        if (typeof index !== 'number') {
-            throw new Error(`Invalid grid index`);
-        }
-        if (index < 1 || index >= __classPrivateFieldGet(this, _grid_rows, "f") * __classPrivateFieldGet(this, _grid_columns, "f")) {
-            throw new Error(`Invalid grid index`);
-        }
-        __classPrivateFieldGet(this, _grid_values, "f")[index] = value;
-    }
-    getIndex(index) {
-        if (typeof index !== 'number') {
-            throw new Error(`Invalid grid index`);
-        }
-        if (index < 1 || index >= __classPrivateFieldGet(this, _grid_rows, "f") * __classPrivateFieldGet(this, _grid_columns, "f")) {
-            throw new Error(`Invalid grid index`);
-        }
-        return __classPrivateFieldGet(this, _grid_values, "f")[index];
-    }
-    fill(value) {
-        for (let i = 0; i < __classPrivateFieldGet(this, _grid_values, "f").length; i++) {
-            __classPrivateFieldGet(this, _grid_values, "f")[i] = value;
-        }
-    }
-    info() {
-        return {
-            rows: __classPrivateFieldGet(this, _grid_rows, "f"),
-            columns: __classPrivateFieldGet(this, _grid_columns, "f"),
-        };
-    }
-    exportGrid() {
-        const grid = [];
-        for (let i = 0; i < __classPrivateFieldGet(this, _grid_rows, "f"); i++) {
-            grid[i] = [];
-            for (let j = 0; j < __classPrivateFieldGet(this, _grid_columns, "f"); j++) {
-                grid[i][j] = __classPrivateFieldGet(this, _grid_values, "f")[i * __classPrivateFieldGet(this, _grid_rows, "f") + j];
+        setColumn(column, values) {
+            if (typeof column !== 'number') {
+                throw new Error(`Invalid grid column`);
+            }
+            if (column < 1 || column >= __classPrivateFieldGet(this, _grid_columns, "f")) {
+                throw new Error(`Invalid grid column`);
+            }
+            if (!Array.isArray(values)) {
+                throw new Error(`Invalid column values`);
+            }
+            if (values.length !== __classPrivateFieldGet(this, _grid_rows, "f")) {
+                throw new Error(`Invalid column values`);
+            }
+            for (let i = 0; i < __classPrivateFieldGet(this, _grid_rows, "f"); i++) {
+                __classPrivateFieldGet(this, _grid_values, "f")[i * __classPrivateFieldGet(this, _grid_columns, "f") + column] = values[i];
             }
         }
-        return grid;
-    }
-    importGrid(values) {
-        if (!Array.isArray(values)) {
-            throw new Error(`Invalid grid value`);
+        getColumns() {
+            const columns = [];
+            for (let i = 0; i < __classPrivateFieldGet(this, _grid_columns, "f"); i++) {
+                columns[i] = this.getColumn(i);
+            }
+            return columns;
         }
-        if (values.length !== __classPrivateFieldGet(this, _grid_rows, "f")) {
-            throw new Error(`Invalid grid value`);
+        setIndex(index, value) {
+            if (typeof index !== 'number') {
+                throw new Error(`Invalid grid index`);
+            }
+            if (index < 1 || index >= __classPrivateFieldGet(this, _grid_rows, "f") * __classPrivateFieldGet(this, _grid_columns, "f")) {
+                throw new Error(`Invalid grid index`);
+            }
+            __classPrivateFieldGet(this, _grid_values, "f")[index] = value;
         }
-        values.forEach((row, i) => this.setRow(i, row));
-    }
-    exportValues() {
-        return [...__classPrivateFieldGet(this, _grid_values, "f")];
-    }
-    importValues(values) {
-        if (!Array.isArray(values)) {
-            throw new Error(`Invalid grid value`);
+        getIndex(index) {
+            if (typeof index !== 'number') {
+                throw new Error(`Invalid grid index`);
+            }
+            if (index < 1 || index >= __classPrivateFieldGet(this, _grid_rows, "f") * __classPrivateFieldGet(this, _grid_columns, "f")) {
+                throw new Error(`Invalid grid index`);
+            }
+            return __classPrivateFieldGet(this, _grid_values, "f")[index];
         }
-        if (values.length !== __classPrivateFieldGet(this, _grid_values, "f").length) {
-            throw new Error(`Invalid grid value`);
+        fill(value) {
+            for (let i = 0; i < __classPrivateFieldGet(this, _grid_values, "f").length; i++) {
+                __classPrivateFieldGet(this, _grid_values, "f")[i] = value;
+            }
         }
-        __classPrivateFieldSet(this, _grid_values, [...__classPrivateFieldGet(this, _grid_values, "f")], "f");
+        info() {
+            return {
+                rows: __classPrivateFieldGet(this, _grid_rows, "f"),
+                columns: __classPrivateFieldGet(this, _grid_columns, "f"),
+            };
+        }
+        exportGrid() {
+            const grid = [];
+            for (let i = 0; i < __classPrivateFieldGet(this, _grid_rows, "f"); i++) {
+                grid[i] = [];
+                for (let j = 0; j < __classPrivateFieldGet(this, _grid_columns, "f"); j++) {
+                    grid[i][j] = __classPrivateFieldGet(this, _grid_values, "f")[i * __classPrivateFieldGet(this, _grid_rows, "f") + j];
+                }
+            }
+            return grid;
+        }
+        importGrid(values) {
+            if (!Array.isArray(values)) {
+                throw new Error(`Invalid grid value`);
+            }
+            if (values.length !== __classPrivateFieldGet(this, _grid_rows, "f")) {
+                throw new Error(`Invalid grid value`);
+            }
+            values.forEach((row, i) => this.setRow(i, row));
+        }
+        exportValues() {
+            return [...__classPrivateFieldGet(this, _grid_values, "f")];
+        }
+        importValues(values) {
+            if (!Array.isArray(values)) {
+                throw new Error(`Invalid grid value`);
+            }
+            if (values.length !== __classPrivateFieldGet(this, _grid_values, "f").length) {
+                throw new Error(`Invalid grid value`);
+            }
+            __classPrivateFieldSet(this, _grid_values, [...__classPrivateFieldGet(this, _grid_values, "f")], "f");
+        }
     }
-}
-_grid_values = new WeakMap(), _grid_rows = new WeakMap(), _grid_columns = new WeakMap();
-class Grid3x3 extends grid {
-    constructor() {
-        super(3, 3);
+    _grid_values = new WeakMap(), _grid_rows = new WeakMap(), _grid_columns = new WeakMap();
+    class Grid3x3 extends grid {
+        constructor() {
+            super(3, 3);
+        }
     }
+    return Grid3x3;
 }
 module.exports = {
-    Grid3x3,
+    MakeGridClass,
 };
 //# sourceMappingURL=grid.js.map
