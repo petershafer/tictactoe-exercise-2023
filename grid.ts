@@ -46,8 +46,8 @@ export class Grid<T> implements GridType<T> {
       throw new Error(`Invalid grid position`);
     }
     if (
-      (row && (row < 1 || row >= this.#rows)) ||
-      (column && (column < 1 || column >= this.#columns))
+      (row && (row < 0 || row >= this.#rows)) ||
+      (column && (column < 0 || column >= this.#columns))
     ) {
       throw new Error(`Invalid grid position`);
     }
@@ -60,8 +60,8 @@ export class Grid<T> implements GridType<T> {
       throw new Error(`Invalid grid position`);
     }
     if (
-      (row && (row < 1 || row >= this.#rows)) ||
-      (column && (column < 1 || column >= this.#columns))
+      (row && (row < 0 || row >= this.#rows)) ||
+      (column && (column < 0 || column >= this.#columns))
     ) {
       throw new Error(`Invalid grid position`);
     }
@@ -72,18 +72,18 @@ export class Grid<T> implements GridType<T> {
     if (typeof row !== 'number') {
       throw new Error(`Invalid grid row`);
     }
-    if (row < 1 || row >= this.#rows) {
+    if (row < 0 || row >= this.#rows) {
       throw new Error(`Invalid grid row`);
     }
     const start = row * this.#columns;
-    return this.#values.slice(start, this.#columns);
+    return this.#values.slice(start, start + this.#columns);
   }
 
   setRow(row: number, values: T[]) {
     if (typeof row !== 'number') {
       throw new Error(`Invalid grid row`);
     }
-    if (row < 1 || row >= this.#rows) {
+    if (row < 0 || row >= this.#rows) {
       throw new Error(`Invalid grid row`);
     }
     if (!Array.isArray(values)) {
@@ -106,10 +106,10 @@ export class Grid<T> implements GridType<T> {
 
   getColumn(column: number) {
     if (typeof column !== 'number') {
-      throw new Error(`Invalid grid row`);
+      throw new Error(`Invalid grid column`);
     }
-    if (column < 1 || column >= this.#columns) {
-      throw new Error(`Invalid grid row`);
+    if (column < 0 || column >= this.#columns) {
+      throw new Error(`Invalid grid column`);
     }
     const columnVals = [];
     for (let i = 0; i < this.#rows; i++) {
@@ -122,7 +122,7 @@ export class Grid<T> implements GridType<T> {
     if (typeof column !== 'number') {
       throw new Error(`Invalid grid column`);
     }
-    if (column < 1 || column >= this.#columns) {
+    if (column < 0 || column >= this.#columns) {
       throw new Error(`Invalid grid column`);
     }
     if (!Array.isArray(values)) {
@@ -148,7 +148,7 @@ export class Grid<T> implements GridType<T> {
     if (typeof index !== 'number') {
       throw new Error(`Invalid grid index`);
     }
-    if (index < 1 || index >= this.#rows * this.#columns) {
+    if (index < 0 || index >= this.#rows * this.#columns) {
       throw new Error(`Invalid grid index`);
     }
     this.#values[index] = value;
@@ -158,7 +158,7 @@ export class Grid<T> implements GridType<T> {
     if (typeof index !== 'number') {
       throw new Error(`Invalid grid index`);
     }
-    if (index < 1 || index >= this.#rows * this.#columns) {
+    if (index < 0 || index >= this.#rows * this.#columns) {
       throw new Error(`Invalid grid index`);
     }
     return this.#values[index];
@@ -209,7 +209,7 @@ export class Grid<T> implements GridType<T> {
     if (values.length !== this.#values.length) {
       throw new Error(`Invalid grid value`);
     }
-    this.#values = [...this.#values];
+    this.#values = [...values];
   }
 }
 
