@@ -38,6 +38,7 @@ class Grid {
             throw new Error(`Invalid grid position`);
         }
         __classPrivateFieldGet(this, _Grid_values, "f")[row * __classPrivateFieldGet(this, _Grid_rows, "f") + column] = value;
+        return this;
     }
     getPosition(position) {
         const [row, column] = position;
@@ -75,6 +76,7 @@ class Grid {
         }
         const start = row * __classPrivateFieldGet(this, _Grid_columns, "f");
         __classPrivateFieldGet(this, _Grid_values, "f").splice(start, __classPrivateFieldGet(this, _Grid_columns, "f"), ...values);
+        return this;
     }
     getRows() {
         const rows = [];
@@ -112,6 +114,7 @@ class Grid {
         for (let i = 0; i < __classPrivateFieldGet(this, _Grid_rows, "f"); i++) {
             __classPrivateFieldGet(this, _Grid_values, "f")[i * __classPrivateFieldGet(this, _Grid_columns, "f") + column] = values[i];
         }
+        return this;
     }
     getColumns() {
         const columns = [];
@@ -128,6 +131,7 @@ class Grid {
             throw new Error(`Invalid grid index`);
         }
         __classPrivateFieldGet(this, _Grid_values, "f")[index] = value;
+        return this;
     }
     getIndex(index) {
         if (typeof index !== 'number') {
@@ -142,6 +146,7 @@ class Grid {
         for (let i = 0; i < __classPrivateFieldGet(this, _Grid_values, "f").length; i++) {
             __classPrivateFieldGet(this, _Grid_values, "f")[i] = value;
         }
+        return this;
     }
     info() {
         return {
@@ -186,6 +191,7 @@ class Grid {
                 this.setPosition([i, j], fn(this.getPosition([i, j]), [i, j]));
             }
         }
+        return this;
     }
     forEach(fn) {
         for (let i = 0; i < __classPrivateFieldGet(this, _Grid_rows, "f"); i++) {
@@ -214,6 +220,7 @@ class Grid {
     }
     reset() {
         __classPrivateFieldSet(this, _Grid_values, Array(__classPrivateFieldGet(this, _Grid_rows, "f") * __classPrivateFieldGet(this, _Grid_columns, "f")), "f");
+        return this;
     }
 }
 exports.Grid = Grid;

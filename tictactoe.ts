@@ -1,13 +1,5 @@
 import { Grid3x3 } from './grid';
-/**
- * NOTES:
- * Type assertions are used here where the map function is applied to a tuple.
- * TypeScript does not consider the output of a mapped tuple to have the same
- * length as the original tuple. I decided to prefer type assertions over explicitly
- * creating new arrays of the same length of the original tuple, with each element
- * explicitly assigned to each part of the tuple. This may be an indicator to
- * adjust the data model.
- */
+
 type PlayerValue = 'x' | 'o';
 type PositionValue = null | PlayerValue;
 type Row = [PositionValue, PositionValue, PositionValue];
@@ -21,39 +13,27 @@ type CoordValue = 0 | 1 | 2;
 type Coord = [CoordValue, CoordValue];
 
 // Generate 2D array that is 3x3 and defaulted to null values.
-const newBoard = (): Board => Array(3).fill(Array(3).fill(null)) as Board;
-const newPatternBoard = (): PatternBoard =>
-  Array(3).fill(Array(3).fill(null)) as PatternBoard;
+const newBoard = (): Grid3x3<PositionValue> =>
+  new Grid3x3<PositionValue>().fill(null);
 
-const winsByRow = (): PatternBoard[] =>
+const newPatternBoard = (): Grid3x3<PatternPosition> =>
+  new Grid3x3<PatternPosition>().fill(null);
+
+const winsByRow = (): Grid3x3<PatternPosition>[] =>
   // Generate boards with winning patterns for the given rows.
-  [0, 1, 2].map((row) => {
-    const board = newPatternBoard();
-    board[row] = [true, true, true];
-    return board;
-  });
+  [0, 1, 2].map((row) => newPatternBoard().setRow(row, [true, true, true]));
 
 // Generate boards with winning patterns for the given columns.
-const winsByColumn = (): PatternBoard[] =>
-  [0, 1, 2].map((column) => {
-    const board = newPatternBoard().map((row): PatternRow => {
-      const newRow = [...row];
-      newRow[column] = true;
-      return newRow as PatternRow;
-    });
-    return board as PatternBoard;
-  });
+const winsByColumn = (): Grid3x3<PatternPosition>[] =>
+  [0, 1, 2].map((column) =>
+    newPatternBoard().setColumn(column, [true, true, true])
+  );
 
 // Generate boards with winning diagonal patterns.
-const winsByDiag = (): PatternBoard[] => [
+const winsByDiag = (): Grid3x3<PatternPosition>[] => [
   // index represents row, value represents position held by player.
-  [0, 1, 2].map(
-    (r): PatternRow =>
-      [r === 0 || null, r === 1 || null, r === 2 || null] as PatternRow
-  ) as PatternBoard,
-  [2, 1, 0].map(
-    (r) => [r === 0 || null, r === 1 || null, r === 2 || null] as PatternRow
-  ) as PatternBoard,
+  newPatternBoard().map((_, [row, col]) => (row === col ? true : null)),
+  newPatternBoard().map((_, [row, col]) => (2 - row === col ? true : null)),
 ];
 
 // Aggregation of all winning boards.
@@ -62,63 +42,53 @@ const winsByDiag = (): PatternBoard[] => [
 const winningBoards = [...winsByRow(), ...winsByColumn(), ...winsByDiag()];
 
 // Check shape and values of board for validity.
-const validateBoard = (board: Board | PatternBoard) => {
-  if (!board || !board.length || board.length !== 3) {
+const validateBoard = (
+  board: Grid3x3<PositionValue> | Grid3x3<PatternPosition>
+) => {
+  if (!board || !(board instanceof Grid3x3)) {
     throw new Error(`Invalid board`);
   }
-  board.forEach((row: Row | PatternRow) => {
-    if (!row || !row.length || row.length !== 3) {
-      throw new Error(`Invalid board`);
-    }
-    if (
-      // @ts-ignore: Unreachable code error
-      !row.every(
-        (cell: PositionValue | PatternPosition) =>
-          cell === 'x' || cell === 'o' || cell === null || cell === true
-      )
-    ) {
-      throw new Error(`Invalid board`);
-    }
+  let valid = true;
+  board.forEach((cell) => {
+    valid =
+      valid && (cell === 'x' || cell === 'o' || cell === null || cell === true);
   });
+  if (!valid) {
+    throw new Error(`Invalid board`);
+  }
 };
 
 // Isolate a player's moves and set their value to align with winning board patterns.
 const normalizeBoardForPlayer = (
-  board: Board,
+  board: Grid3x3<PositionValue>,
   player: PlayerValue
-): PatternBoard => {
+): Grid3x3<PatternPosition> => {
   if (player !== 'x' && player !== 'o') {
     console.log(player);
     throw new Error(`Invalid player`);
   }
-  const newBoard = board.map((row: Row) => {
-    return row.map((column): PatternPosition => {
-      if (column === player) {
-        return true;
-      }
-      return null;
-    }) as PatternRow;
+  const newBoard = new Grid3x3<PatternPosition>();
+  board.forEach((value, position) => {
+    newBoard.setPosition(position, value === player ? true : null);
   });
-  return newBoard as PatternBoard;
+
+  return newBoard;
 };
 
 // Compare a filtered game board with a board representing a minimum winning pattern.
 // If the given pattern board is contained within the game board, return true.
 const matchingBoards =
-  (gameBoard: PatternBoard) => (patternBoard: PatternBoard) => {
+  (gameBoard: Grid3x3<PatternPosition>) =>
+  (patternBoard: Grid3x3<PatternPosition>) => {
     validateBoard(gameBoard);
-    for (let i = 0; i < patternBoard.length; i++) {
-      for (let j = 0; j < patternBoard[i].length; j++) {
-        if (patternBoard[i][j] === true && gameBoard[i][j] === null) {
-          return false;
-        }
-      }
-    }
-    return true;
+    return gameBoard.contains(patternBoard);
   };
 
 // Check if a given gameboard allows a player to win the game.
-const isWinningBoard = (gameBoard: Board, player: PlayerValue) => {
+const isWinningBoard = (
+  gameBoard: Grid3x3<PositionValue>,
+  player: PlayerValue
+) => {
   validateBoard(gameBoard);
   return (
     winningBoards.findIndex(
@@ -128,20 +98,20 @@ const isWinningBoard = (gameBoard: Board, player: PlayerValue) => {
 };
 
 // Print the board as a string to the console.
-const printBoard = (board: Board) => {
-  console.log(
-    board
-      .map((row) =>
-        row
-          .map((place: PositionValue) => (place === null ? '-' : place))
-          .join(' ')
-      )
-      .join('\n')
-  );
+const printBoard = (board: Grid3x3<any>) => {
+  let output = '';
+  board
+    .exportGrid()
+    .map((row) => row.map((val) => (val === null ? '-' : val)))
+    .join('\n');
 };
 
 // Create a new board object representing the board state given a player move.
-const doMove = (player: PlayerValue, position: Coord, board: Board): Board => {
+const doMove = (
+  player: PlayerValue,
+  position: Coord,
+  board: Grid3x3<PositionValue>
+): Grid3x3<PositionValue> => {
   validateBoard(board);
   if (position === undefined || !Array.isArray(position)) {
     throw new Error(`Invalid position`);
@@ -153,23 +123,19 @@ const doMove = (player: PlayerValue, position: Coord, board: Board): Board => {
   if (!Number.isInteger(row) || !Number.isInteger(column)) {
     throw new Error(`Invalid position`);
   }
-  if (board[row] === undefined || board[row][column] === undefined) {
+  try {
+    board.getPosition(position);
+  } catch (e) {
     throw new Error(`Invalid position`);
   }
   if (player !== 'x' && player !== 'o') {
     throw new Error(`Invalid player`);
   }
-  if (board[row][column] !== null) {
+  if (board.getPosition(position) !== null) {
     throw new Error(`Position not null`);
   }
-  const nextBoard = board.map((prevRow: Row, i: number): Row => {
-    const newRow = [...prevRow];
-    if (i === row) {
-      newRow[column] = player;
-    }
-    return newRow as Row;
-  });
-  return nextBoard as Board;
+  board.setPosition(position, player);
+  return board;
 };
 
 // Generate a new game object that can be used from the command line or browser.
@@ -204,13 +170,13 @@ const newGame = () => {
       }
     },
     isOver: () => gameOver,
-    getBoard: () => board,
+    getBoard: () => board.exportGrid(),
     printBoard: () => printBoard(board),
     winner: () => winner,
     export: () => ({
       winner,
       firstPlayer,
-      board: [...board],
+      board: board.exportGrid(),
       history: [...history],
     }),
   };

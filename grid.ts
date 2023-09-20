@@ -5,30 +5,30 @@ export interface GridDescription {
 }
 
 interface GridType<T> {
-  setPosition: (position: Coordinates, value: T) => void;
+  setPosition: (position: Coordinates, value: T) => Grid<T>;
   getPosition: (position: Coordinates) => T;
-  setIndex: (index: number, value: T) => void;
+  setIndex: (index: number, value: T) => Grid<T>;
   getIndex: (index: number) => T;
   getRow: (row: number) => T[];
-  setRow: (row: number, values: T[]) => void;
+  setRow: (row: number, values: T[]) => Grid<T>;
   getRows: () => T[][];
   getColumn: (column: number) => T[];
-  setColumn: (column: number, values: T[]) => void;
+  setColumn: (column: number, values: T[]) => Grid<T>;
   getColumns: () => T[][];
-  fill: (value: T) => void;
+  fill: (value: T) => Grid<T>;
   info: () => GridDescription;
   exportGrid: () => T[][];
   importGrid: (values: T[][]) => void;
   exportValues: () => T[];
   importValues: (values: T[]) => void;
-  map: (fn: (value: T, position: Coordinates) => T) => void;
+  map: (fn: (value: T, position: Coordinates) => T) => Grid<T>;
   forEach: (fn: (value: T, position: Coordinates) => void) => void;
   duplicate: () => Grid<T>;
   contains: (
     other: Grid<unknown>,
     comparator?: (otherValue: unknown, containerValue: unknown) => boolean
   ) => boolean;
-  reset: () => void;
+  reset: () => Grid<T>;
 }
 
 export class Grid<T> implements GridType<T> {
@@ -60,6 +60,7 @@ export class Grid<T> implements GridType<T> {
       throw new Error(`Invalid grid position`);
     }
     this.#values[row * this.#rows + column] = value;
+    return this;
   }
 
   getPosition(position: Coordinates) {
@@ -102,6 +103,7 @@ export class Grid<T> implements GridType<T> {
     }
     const start = row * this.#columns;
     this.#values.splice(start, this.#columns, ...values);
+    return this;
   }
 
   getRows() {
@@ -142,6 +144,7 @@ export class Grid<T> implements GridType<T> {
     for (let i = 0; i < this.#rows; i++) {
       this.#values[i * this.#columns + column] = values[i];
     }
+    return this;
   }
 
   getColumns() {
@@ -160,6 +163,7 @@ export class Grid<T> implements GridType<T> {
       throw new Error(`Invalid grid index`);
     }
     this.#values[index] = value;
+    return this;
   }
 
   getIndex(index: number) {
@@ -176,6 +180,7 @@ export class Grid<T> implements GridType<T> {
     for (let i = 0; i < this.#values.length; i++) {
       this.#values[i] = value;
     }
+    return this;
   }
 
   info() {
@@ -226,6 +231,7 @@ export class Grid<T> implements GridType<T> {
         this.setPosition([i, j], fn(this.getPosition([i, j]), [i, j]));
       }
     }
+    return this;
   }
 
   forEach(fn: (value: T, position: Coordinates) => void) {
@@ -260,6 +266,7 @@ export class Grid<T> implements GridType<T> {
 
   reset() {
     this.#values = Array(this.#rows * this.#columns);
+    return this;
   }
 }
 
