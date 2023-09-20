@@ -2,13 +2,7 @@ import { Grid3x3 } from './grid';
 
 type PlayerValue = 'x' | 'o';
 type PositionValue = null | PlayerValue;
-type Row = [PositionValue, PositionValue, PositionValue];
-type Board = [Row, Row, Row];
-
 type PatternPosition = null | true;
-type PatternRow = [PatternPosition, PatternPosition, PatternPosition];
-type PatternBoard = [PatternRow, PatternRow, PatternRow];
-
 type CoordValue = 0 | 1 | 2;
 type Coord = [CoordValue, CoordValue];
 
@@ -99,11 +93,11 @@ const isWinningBoard = (
 
 // Print the board as a string to the console.
 const printBoard = (board: Grid3x3<any>) => {
-  let output = '';
-  board
+  let output = board
     .exportGrid()
-    .map((row) => row.map((val) => (val === null ? '-' : val)))
+    .map((row) => row.map((val) => (val === null ? '-' : val)).join(' '))
     .join('\n');
+  console.log(output);
 };
 
 // Create a new board object representing the board state given a player move.

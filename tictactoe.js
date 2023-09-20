@@ -58,11 +58,11 @@ const isWinningBoard = (gameBoard, player) => {
 };
 // Print the board as a string to the console.
 const printBoard = (board) => {
-    let output = '';
-    board
+    let output = board
         .exportGrid()
-        .map((row) => row.map((val) => (val === null ? '-' : val)))
+        .map((row) => row.map((val) => (val === null ? '-' : val)).join(' '))
         .join('\n');
+    console.log(output);
 };
 // Create a new board object representing the board state given a player move.
 const doMove = (player, position, board) => {
