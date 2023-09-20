@@ -1,5 +1,21 @@
 const tictactoe = require('./tictactoe');
 const { playbackGame } = require('./utils');
+const { newBoard } = tictactoe.unit;
+
+describe('tictactoe unit tests', () => {
+  describe('newBoard()', () => {
+    it('Should create a new 3x3 game board', () => {
+      expect(newBoard()).toEqual([
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ]);
+    });
+    it('Should create a new array every time', () => {
+      expect(newBoard()).not.toBe(newBoard());
+    });
+  });
+});
 
 describe('tictactoe.newGame()', () => {
   it('Should return a game object', () => {
@@ -66,6 +82,21 @@ describe('game objects', () => {
       expect(game.getBoard()).toEqual(startingBoard);
       expect(() => {
         game.nextMove('x', [-1, 0]);
+      }).toThrow(new Error(`Invalid position`));
+      expect(() => {
+        game.nextMove('x');
+      }).toThrow(new Error(`Invalid position`));
+      expect(() => {
+        game.nextMove('x', { row: 0, col: 0 });
+      }).toThrow(new Error(`Invalid position`));
+      expect(() => {
+        game.nextMove('x', [null, null]);
+      }).toThrow(new Error(`Invalid position`));
+      expect(() => {
+        game.nextMove('x', ['0', '0']);
+      }).toThrow(new Error(`Invalid position`));
+      expect(() => {
+        game.nextMove('x', []);
       }).toThrow(new Error(`Invalid position`));
       expect(game.getBoard()).toEqual(startingBoard);
     });
