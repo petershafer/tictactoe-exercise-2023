@@ -89,13 +89,30 @@ const printBoard = (board) => {
 };
 // Create a new board object representing the board state given a player move.
 const doMove = (player, position, board) => {
-    const [row, column] = position;
-    validateBoard(board);
-    if (row === undefined || column === undefined) {
-        throw new Error(`Invalid position`);
-    }
-    if (!Number.isInteger(row) || !Number.isInteger(column)) {
-        throw new Error(`Invalid position`);
+  validateBoard(board);
+  if (position === undefined || !Array.isArray(position)) {
+    throw new Error(`Invalid position`);
+  }
+  const [row, column] = position;
+  if (row === undefined || column === undefined) {
+    throw new Error(`Invalid position`);
+  }
+  if (!Number.isInteger(row) || !Number.isInteger(column)) {
+    throw new Error(`Invalid position`);
+  }
+  if (board[row] === undefined || board[row][column] === undefined) {
+    throw new Error(`Invalid position`);
+  }
+  if (player !== 'x' && player !== 'o') {
+    throw new Error(`Invalid player`);
+  }
+  if (board[row][column] !== null) {
+    throw new Error(`Position not null`);
+  }
+  const nextBoard = board.map((prevRow, i) => {
+    const newRow = [...prevRow];
+    if (i === row) {
+      newRow[column] = player;
     }
     if (board[row] === undefined || board[row][column] === undefined) {
         throw new Error(`Invalid position`);
@@ -168,7 +185,7 @@ module.exports = {
         normalizeBoardForPlayer,
         validateBoard,
         winningBoards,
-        getBoard: newBoard,
+        newBoard,
     },
 };
 //# sourceMappingURL=tictactoe.js.map

@@ -8,7 +8,8 @@
     "build": "tsc --build && webpack",
     "serve": "tsc --build && webpack && npx serve serve/",
     "generate": "tsc --build && node generateGames.js",
-    "test": "tsc --build && jest"
+    "test": "tsc --build && jest",
+    "coverage": "jest --coverage"
   },
   "author": "",
   "license": "ISC",
