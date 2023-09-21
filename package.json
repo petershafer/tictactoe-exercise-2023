@@ -4,16 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "play": "node commandLine.js",
-    "build": "webpack",
-    "serve": "webpack && npx serve serve/",
-    "generate": "node generateGames.js",
-    "test": "jest",
+    "play": "tsc --build && node commandLine.js",
+    "build": "tsc --build && webpack",
+    "serve": "tsc --build && webpack && npx serve serve/",
+    "generate": "tsc --build && node generateGames.js",
+    "test": "tsc --build && jest",
     "coverage": "jest --coverage"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "eslint": "^8.49.0",

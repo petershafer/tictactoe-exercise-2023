@@ -5,7 +5,7 @@ const { newBoard } = tictactoe.unit;
 describe('tictactoe unit tests', () => {
   describe('newBoard()', () => {
     it('Should create a new 3x3 game board', () => {
-      expect(newBoard()).toEqual([
+      expect(newBoard().exportGrid()).toEqual([
         [null, null, null],
         [null, null, null],
         [null, null, null],
