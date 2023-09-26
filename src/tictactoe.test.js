@@ -1,4 +1,4 @@
-const tictactoe = require('../dist/tictactoe');
+const tictactoe = require('../src/tictactoe');
 const { playbackGame } = require('../utils');
 const { newBoard } = tictactoe.unit;
 
