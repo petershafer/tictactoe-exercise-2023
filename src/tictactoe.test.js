@@ -440,4 +440,21 @@ describe('game objects', () => {
       });
     });
   });
+  describe('Bug checks', () => {
+    it(`Issue #7 - Game does not end in certain scenarios`, () => {
+      const ScenarioOne = [
+        ['x', [0, 1]],
+        ['o', [0, 0]],
+        ['x', [0, 2]],
+        ['o', [1, 0]],
+        ['x', [1, 2]],
+        ['o', [1, 1]],
+        ['x', [2, 0]],
+        ['o', [2, 2]],
+      ];
+      const game = playbackGame(ScenarioOne);
+      expect(game.isOver()).toBeTruthy();
+      expect(game.winner()).toBe('o');
+    });
+  });
 });

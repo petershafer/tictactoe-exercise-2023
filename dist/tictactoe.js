@@ -49,7 +49,7 @@ const normalizeBoardForPlayer = (board, player) => {
 // If the given pattern board is contained within the game board, return true.
 const matchingBoards = (gameBoard) => (patternBoard) => {
     validateBoard(gameBoard);
-    return gameBoard.contains(patternBoard);
+    return gameBoard.contains(patternBoard, (gameVal, patternVal) => patternVal === null || gameVal === patternVal);
 };
 // Check if a given gameboard allows a player to win the game.
 const isWinningBoard = (gameBoard, player) => {

@@ -75,7 +75,10 @@ const matchingBoards =
   (gameBoard: Grid3x3<PatternPosition>) =>
   (patternBoard: Grid3x3<PatternPosition>) => {
     validateBoard(gameBoard);
-    return gameBoard.contains(patternBoard);
+    return gameBoard.contains(
+      patternBoard,
+      (gameVal, patternVal) => patternVal === null || gameVal === patternVal
+    );
   };
 
 // Check if a given gameboard allows a player to win the game.
