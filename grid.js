@@ -210,10 +210,10 @@ class Grid {
         other.forEach((value, [row, column]) => {
             if (comparator) {
                 contains =
-                    contains && comparator(value, this.getPosition([row, column]));
+                    contains && comparator(this.getPosition([row, column]), value);
             }
             else if (value !== undefined) {
-                contains = contains && value === this.getPosition([row, column]);
+                contains = contains && this.getPosition([row, column]) === value;
             }
         });
         return contains;

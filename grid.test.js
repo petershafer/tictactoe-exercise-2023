@@ -307,7 +307,7 @@ describe('Grid Class', () => {
       const myOtherGrid = new Grid(3, 3);
       myOtherGrid.fill(null);
       myOtherGrid.setIndex(0, 1);
-      const comparator = (otherValue, value) => {
+      const comparator = (value, otherValue) => {
         if (otherValue !== null) {
           return otherValue === value;
         }
