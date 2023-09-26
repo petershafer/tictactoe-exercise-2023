@@ -26,7 +26,7 @@ interface GridType<T> {
   duplicate: () => Grid<T>;
   contains: (
     other: Grid<unknown>,
-    comparator?: (otherValue: unknown, containerValue: unknown) => boolean
+    comparator?: (containerValue: unknown, otherValue: unknown) => boolean
   ) => boolean;
   reset: () => Grid<T>;
 }
