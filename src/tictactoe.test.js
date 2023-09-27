@@ -1,5 +1,5 @@
-const tictactoe = require('./tictactoe');
-const { playbackGame } = require('./utils');
+const tictactoe = require('../src/tictactoe');
+const { playbackGame } = require('../utils');
 const { newBoard } = tictactoe.unit;
 
 describe('tictactoe unit tests', () => {

@@ -1,4 +1,4 @@
-const { Grid, Grid3x3 } = require('./grid');
+const { Grid, Grid3x3 } = require('../src/grid');
 
 describe('Grid Class', () => {
   it('Should create a grid instance', () => {
