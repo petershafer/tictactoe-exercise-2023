@@ -68,9 +68,9 @@ describe('Grid Class', () => {
     });
     it('should not set values outside of the grid', () => {
       const myGrid = new Grid(3, 3);
-      expect(() => myGrid.setRow(-1)).toThrow('Invalid grid row');
-      expect(() => myGrid.setRow('0')).toThrow('Invalid grid row');
-      expect(() => myGrid.setRow(3)).toThrow('Invalid grid row');
+      expect(() => myGrid.setRow(-1, [1, 2, 3])).toThrow('Invalid grid row');
+      expect(() => myGrid.setRow('0', [1, 2, 3])).toThrow('Invalid grid row');
+      expect(() => myGrid.setRow(3, [1, 2, 3])).toThrow('Invalid grid row');
     });
   });
   describe('getRows()', () => {
@@ -260,6 +260,7 @@ describe('Grid Class', () => {
       });
       expect(values).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     });
+    // TODO: This is not correct.
     it('should provide the correct row and column values', () => {
       const myGrid = new Grid(3, 3);
       myGrid.map((value, position) => {
@@ -377,6 +378,7 @@ describe('Grid Class', () => {
       expect(myGrid.contains(myOtherGrid, comparator)).toBeFalsy();
     });
   });
+  // TODO: This is not correct
   describe('reset()', () => {
     const myGrid = new Grid(3, 3);
     myGrid.forEach((value) => {
