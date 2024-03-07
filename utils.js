@@ -1,4 +1,4 @@
-const tictactoe = require('./tictactoe');
+const tictactoe = require('./dist/tictactoe');
 
 function playbackGame(moveHistory, verbose = true) {
   let game = tictactoe.newGame();
