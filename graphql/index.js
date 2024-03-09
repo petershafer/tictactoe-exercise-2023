@@ -2,18 +2,65 @@ var express = require('express');
 var { createHandler } = require('graphql-http/lib/use/express');
 var { buildSchema } = require('graphql');
 var { ruruHTML } = require('ruru/server');
+const { v4: uuidv4 } = require('uuid');
+const { newGame } = require('../dist/tictactoe');
+
+const games = {};
 
 // Construct a schema, using GraphQL schema language
 var schema = buildSchema(`
   type Query {
-    hello(name: String, greeting: String): String
+    hello(name: String, greeting: String): String,
+    game(id: String!): Game!
+  }
+
+  type Mutation {
+    newGame: Game!,
+    doMove(id: ID, player: String, row: Int, col: Int): Game!
+  }
+
+  type Move {
+    player: String,
+    position: [Int]
+  }
+
+  type Game {
+    id: ID,
+    winner: String,
+    firstPlayer: String,
+    board: [[String]],
+    history: [Move]
   }
 `);
+
+const transformExport = (gameExport) => ({
+  ...gameExport,
+  history: gameExport.history.map(([player, position]) => ({
+    player,
+    position,
+  })),
+});
 
 // The root provides a resolver function for each API endpoint
 var root = {
   hello: ({ name = 'world', greeting = 'Hello' }) => {
     return `${greeting} ${name}!`;
+  },
+  game: ({ id }) => {
+    const game = games[id];
+    return { id: id, ...games[id].export() };
+  },
+  newGame: () => {
+    const gameId = uuidv4();
+    games[gameId] = newGame();
+    const gameExport = games[gameId].export();
+    return { id: gameId, ...transformExport(gameExport) };
+  },
+  doMove: ({ id, player, row, col }) => {
+    const game = games[id];
+    game.nextMove(player, [row, col]);
+    const gameExport = games[id].export();
+    return { id, ...transformExport(gameExport) };
   },
 };
 
