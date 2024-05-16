@@ -127,6 +127,7 @@ const newGame = () => {
         getBoard: () => board.exportGrid(),
         printBoard: () => printBoard(board),
         winner: () => winner,
+        lastPlayer: () => lastPlayer,
         export: () => ({
             winner,
             firstPlayer,
