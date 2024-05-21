@@ -87,11 +87,15 @@ const isWinningBoard = (
   player: PlayerValue
 ) => {
   validateBoard(gameBoard);
-  return (
-    winningBoards.findIndex(
-      matchingBoards(normalizeBoardForPlayer(gameBoard, player))
-    ) > -1
+  const winningIndex = winningBoards.findIndex(
+    matchingBoards(normalizeBoardForPlayer(gameBoard, player))
   );
+  return {
+    complete: winningIndex > -1,
+    winner: player,
+    winPattern:
+      winningIndex > -1 ? winningBoards[winningIndex].exportValues() : null,
+  };
 };
 
 // Print the board as a string to the console.
@@ -142,24 +146,24 @@ const newGame = () => {
   let lastPlayer: PositionValue = null;
   let firstPlayer: PositionValue = null;
   let winner: PlayerValue | null = null;
+  let winPattern: PatternPosition[] | null = null;
   const history = Array();
   return {
     nextMove: (player: PlayerValue, position: Coord) => {
       if (gameOver) {
-        console.log(`The game is over!`);
-        return;
+        throw new Error(`The game is over!`);
       }
       if (player === lastPlayer) {
-        console.log(`${player} already went. Please wait.`);
-        return;
+        throw new Error(`${player} already went. Please wait.`);
       }
       board = doMove(player, position, board);
       history.push([player, position]);
       lastPlayer = player;
       firstPlayer = firstPlayer === null ? player : firstPlayer;
       const result = isWinningBoard(board, player);
-      if (result !== false) {
+      if (result.complete !== false) {
         winner = player;
+        winPattern = result.winPattern;
         gameOver = true;
       }
       if (history.length === 9) {
@@ -171,6 +175,7 @@ const newGame = () => {
     printBoard: () => printBoard(board),
     winner: () => winner,
     lastPlayer: () => lastPlayer,
+    winPattern: () => winPattern,
     export: () => ({
       winner,
       firstPlayer,
