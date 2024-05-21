@@ -1,8 +1,9 @@
-type PlayerValue = 'x' | 'o';
-type PositionValue = null | PlayerValue;
-type PatternPosition = null | true;
-type CoordValue = 0 | 1 | 2;
-type Coord = [CoordValue, CoordValue];
+import { Grid3x3 } from './grid';
+export type PlayerValue = 'x' | 'o';
+export type PositionValue = null | PlayerValue;
+export type PatternPosition = null | true;
+export type CoordValue = 0 | 1 | 2;
+export type Coord = [CoordValue, CoordValue];
 export interface TTTObject {
     nextMove: (player: PlayerValue, position: Coord) => void;
     isOver: () => boolean;
@@ -19,4 +20,18 @@ export interface GameExport {
     board: PositionValue[][];
     history: (PlayerValue | Coord)[];
 }
-export {};
+export declare const newGame: () => TTTObject;
+export declare const unit: {
+    doMove: (player: PlayerValue, position: Coord, board: Grid3x3<PositionValue>) => Grid3x3<PositionValue>;
+    printBoard: (board: Grid3x3<any>) => void;
+    isWinningBoard: (gameBoard: Grid3x3<PositionValue>, player: PlayerValue) => {
+        complete: boolean;
+        winner: PlayerValue;
+        winPattern: PatternPosition[] | null;
+    };
+    matchingBoards: (gameBoard: Grid3x3<PatternPosition>) => (patternBoard: Grid3x3<PatternPosition>) => boolean;
+    normalizeBoardForPlayer: (board: Grid3x3<PositionValue>, player: PlayerValue) => Grid3x3<PatternPosition>;
+    validateBoard: (board: Grid3x3<PositionValue> | Grid3x3<PatternPosition>) => void;
+    winningBoards: Grid3x3<PatternPosition>[];
+    newBoard: () => Grid3x3<PositionValue>;
+};

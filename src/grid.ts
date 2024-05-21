@@ -4,7 +4,7 @@ export interface GridDescription {
   columns: number;
 }
 
-interface GridType<T> {
+export interface GridType<T> {
   setPosition: (position: Coordinates, value: T) => Grid<T>;
   getPosition: (position: Coordinates) => T;
   setIndex: (index: number, value: T) => Grid<T>;

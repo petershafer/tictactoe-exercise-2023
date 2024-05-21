@@ -3,7 +3,7 @@ export interface GridDescription {
     rows: number;
     columns: number;
 }
-interface GridType<T> {
+export interface GridType<T> {
     setPosition: (position: Coordinates, value: T) => Grid<T>;
     getPosition: (position: Coordinates) => T;
     setIndex: (index: number, value: T) => Grid<T>;
@@ -57,4 +57,3 @@ export declare class Grid<T> implements GridType<T> {
 export declare class Grid3x3<T> extends Grid<T> {
     constructor();
 }
-export {};

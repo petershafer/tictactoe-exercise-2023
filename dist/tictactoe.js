@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.unit = exports.newGame = void 0;
 const grid_1 = require("./grid");
 // Generate 2D array that is 3x3 and defaulted to null values.
 const newBoard = () => new grid_1.Grid3x3().fill(null);
@@ -142,17 +143,15 @@ const newGame = () => {
         }),
     };
 };
-module.exports = {
-    newGame,
-    unit: {
-        doMove,
-        printBoard,
-        isWinningBoard,
-        matchingBoards,
-        normalizeBoardForPlayer,
-        validateBoard,
-        winningBoards,
-        newBoard,
-    },
+exports.newGame = newGame;
+exports.unit = {
+    doMove,
+    printBoard,
+    isWinningBoard,
+    matchingBoards,
+    normalizeBoardForPlayer,
+    validateBoard,
+    winningBoards,
+    newBoard,
 };
 //# sourceMappingURL=tictactoe.js.map

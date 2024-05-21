@@ -1,10 +1,10 @@
 import { Grid3x3 } from './grid';
 
-type PlayerValue = 'x' | 'o';
-type PositionValue = null | PlayerValue;
-type PatternPosition = null | true;
-type CoordValue = 0 | 1 | 2;
-type Coord = [CoordValue, CoordValue];
+export type PlayerValue = 'x' | 'o';
+export type PositionValue = null | PlayerValue;
+export type PatternPosition = null | true;
+export type CoordValue = 0 | 1 | 2;
+export type Coord = [CoordValue, CoordValue];
 
 // Generate 2D array that is 3x3 and defaulted to null values.
 const newBoard = (): Grid3x3<PositionValue> =>
@@ -158,7 +158,7 @@ export interface GameExport {
 }
 
 // Generate a new game object that can be used from the command line or browser.
-const newGame: () => TTTObject = () => {
+export const newGame: () => TTTObject = () => {
   let board = newBoard();
   let gameOver = false;
   let lastPlayer: PositionValue = null;
@@ -203,16 +203,13 @@ const newGame: () => TTTObject = () => {
   };
 };
 
-module.exports = {
-  newGame,
-  unit: {
-    doMove,
-    printBoard,
-    isWinningBoard,
-    matchingBoards,
-    normalizeBoardForPlayer,
-    validateBoard,
-    winningBoards,
-    newBoard,
-  },
+export const unit = {
+  doMove,
+  printBoard,
+  isWinningBoard,
+  matchingBoards,
+  normalizeBoardForPlayer,
+  validateBoard,
+  winningBoards,
+  newBoard,
 };
