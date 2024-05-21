@@ -139,8 +139,26 @@ const doMove = (
   return board;
 };
 
+export interface TTTObject {
+  nextMove: (player: PlayerValue, position: Coord) => void;
+  isOver: () => boolean;
+  getBoard: () => PositionValue[][];
+  printBoard: () => void;
+  winner: () => PlayerValue | null;
+  lastPlayer: () => PlayerValue | null;
+  winPattern: () => PatternPosition[] | null;
+  export: () => GameExport;
+}
+
+export interface GameExport {
+  winner: PlayerValue | null;
+  firstPlayer: PlayerValue | null;
+  board: PositionValue[][];
+  history: (PlayerValue | Coord)[];
+}
+
 // Generate a new game object that can be used from the command line or browser.
-const newGame = () => {
+const newGame: () => TTTObject = () => {
   let board = newBoard();
   let gameOver = false;
   let lastPlayer: PositionValue = null;
