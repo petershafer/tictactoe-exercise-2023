@@ -10,6 +10,8 @@ import type {
   Coord,
 } from './tictactoe';
 
+export const PACKAGE_NAME = 'tictactoe';
+
 export { newGame, Grid3x3 };
 
 export type {
