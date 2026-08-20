@@ -54,7 +54,9 @@ describe('game objects', () => {
     it('Should not allow a player to play two moves in a row', () => {
       const game = tictactoe.newGame();
       game.nextMove('x', [0, 0]);
-      game.nextMove('x', [0, 1]);
+      expect(() => game.nextMove('x', [0, 1])).toThrow(
+        `x already went. Please wait.`
+      );
       expect(game.getBoard()).toEqual([
         ['x', null, null],
         [null, null, null],
@@ -109,7 +111,7 @@ describe('game objects', () => {
         ['x', [0, 2]],
       ];
       const game = playbackGame(ScenarioOne);
-      game.nextMove('o', [1, 2]);
+      expect(() => game.nextMove('o', [1, 2])).toThrow(`The game is over!`);
       expect(game.getBoard()).toEqual([
         ['x', 'x', 'x'],
         ['o', 'o', null],

@@ -1,10 +1,10 @@
 import { Grid3x3 } from './grid';
 
-type PlayerValue = 'x' | 'o';
-type PositionValue = null | PlayerValue;
-type PatternPosition = null | true;
-type CoordValue = 0 | 1 | 2;
-type Coord = [CoordValue, CoordValue];
+export type PlayerValue = 'x' | 'o';
+export type PositionValue = null | PlayerValue;
+export type PatternPosition = null | true;
+export type CoordValue = 0 | 1 | 2;
+export type Coord = [CoordValue, CoordValue];
 
 // Generate 2D array that is 3x3 and defaulted to null values.
 const newBoard = (): Grid3x3<PositionValue> =>
@@ -87,11 +87,15 @@ const isWinningBoard = (
   player: PlayerValue
 ) => {
   validateBoard(gameBoard);
-  return (
-    winningBoards.findIndex(
-      matchingBoards(normalizeBoardForPlayer(gameBoard, player))
-    ) > -1
+  const winningIndex = winningBoards.findIndex(
+    matchingBoards(normalizeBoardForPlayer(gameBoard, player))
   );
+  return {
+    complete: winningIndex > -1,
+    winner: player,
+    winPattern:
+      winningIndex > -1 ? winningBoards[winningIndex].exportValues() : null,
+  };
 };
 
 // Print the board as a string to the console.
@@ -135,31 +139,49 @@ const doMove = (
   return board;
 };
 
+export interface TTTObject {
+  nextMove: (player: PlayerValue, position: Coord) => void;
+  isOver: () => boolean;
+  getBoard: () => PositionValue[][];
+  printBoard: () => void;
+  winner: () => PlayerValue | null;
+  lastPlayer: () => PlayerValue | null;
+  winPattern: () => PatternPosition[] | null;
+  export: () => GameExport;
+}
+
+export interface GameExport {
+  winner: PlayerValue | null;
+  firstPlayer: PlayerValue | null;
+  board: PositionValue[][];
+  history: (PlayerValue | Coord)[];
+}
+
 // Generate a new game object that can be used from the command line or browser.
-const newGame = () => {
+export const newGame: () => TTTObject = () => {
   let board = newBoard();
   let gameOver = false;
   let lastPlayer: PositionValue = null;
   let firstPlayer: PositionValue = null;
   let winner: PlayerValue | null = null;
+  let winPattern: PatternPosition[] | null = null;
   const history = Array();
   return {
     nextMove: (player: PlayerValue, position: Coord) => {
       if (gameOver) {
-        console.log(`The game is over!`);
-        return;
+        throw new Error(`The game is over!`);
       }
       if (player === lastPlayer) {
-        console.log(`${player} already went. Please wait.`);
-        return;
+        throw new Error(`${player} already went. Please wait.`);
       }
       board = doMove(player, position, board);
       history.push([player, position]);
       lastPlayer = player;
       firstPlayer = firstPlayer === null ? player : firstPlayer;
       const result = isWinningBoard(board, player);
-      if (result !== false) {
+      if (result.complete !== false) {
         winner = player;
+        winPattern = result.winPattern;
         gameOver = true;
       }
       if (history.length === 9) {
@@ -170,6 +192,8 @@ const newGame = () => {
     getBoard: () => board.exportGrid(),
     printBoard: () => printBoard(board),
     winner: () => winner,
+    lastPlayer: () => lastPlayer,
+    winPattern: () => winPattern,
     export: () => ({
       winner,
       firstPlayer,
@@ -179,16 +203,13 @@ const newGame = () => {
   };
 };
 
-module.exports = {
-  newGame,
-  unit: {
-    doMove,
-    printBoard,
-    isWinningBoard,
-    matchingBoards,
-    normalizeBoardForPlayer,
-    validateBoard,
-    winningBoards,
-    newBoard,
-  },
+export const unit = {
+  doMove,
+  printBoard,
+  isWinningBoard,
+  matchingBoards,
+  normalizeBoardForPlayer,
+  validateBoard,
+  winningBoards,
+  newBoard,
 };

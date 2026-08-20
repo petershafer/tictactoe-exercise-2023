@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.unit = exports.newGame = void 0;
 const grid_1 = require("./grid");
 // Generate 2D array that is 3x3 and defaulted to null values.
 const newBoard = () => new grid_1.Grid3x3().fill(null);
@@ -54,7 +55,12 @@ const matchingBoards = (gameBoard) => (patternBoard) => {
 // Check if a given gameboard allows a player to win the game.
 const isWinningBoard = (gameBoard, player) => {
     validateBoard(gameBoard);
-    return (winningBoards.findIndex(matchingBoards(normalizeBoardForPlayer(gameBoard, player))) > -1);
+    const winningIndex = winningBoards.findIndex(matchingBoards(normalizeBoardForPlayer(gameBoard, player)));
+    return {
+        complete: winningIndex > -1,
+        winner: player,
+        winPattern: winningIndex > -1 ? winningBoards[winningIndex].exportValues() : null,
+    };
 };
 // Print the board as a string to the console.
 const printBoard = (board) => {
@@ -99,24 +105,24 @@ const newGame = () => {
     let lastPlayer = null;
     let firstPlayer = null;
     let winner = null;
+    let winPattern = null;
     const history = Array();
     return {
         nextMove: (player, position) => {
             if (gameOver) {
-                console.log(`The game is over!`);
-                return;
+                throw new Error(`The game is over!`);
             }
             if (player === lastPlayer) {
-                console.log(`${player} already went. Please wait.`);
-                return;
+                throw new Error(`${player} already went. Please wait.`);
             }
             board = doMove(player, position, board);
             history.push([player, position]);
             lastPlayer = player;
             firstPlayer = firstPlayer === null ? player : firstPlayer;
             const result = isWinningBoard(board, player);
-            if (result !== false) {
+            if (result.complete !== false) {
                 winner = player;
+                winPattern = result.winPattern;
                 gameOver = true;
             }
             if (history.length === 9) {
@@ -127,6 +133,8 @@ const newGame = () => {
         getBoard: () => board.exportGrid(),
         printBoard: () => printBoard(board),
         winner: () => winner,
+        lastPlayer: () => lastPlayer,
+        winPattern: () => winPattern,
         export: () => ({
             winner,
             firstPlayer,
@@ -135,17 +143,15 @@ const newGame = () => {
         }),
     };
 };
-module.exports = {
-    newGame,
-    unit: {
-        doMove,
-        printBoard,
-        isWinningBoard,
-        matchingBoards,
-        normalizeBoardForPlayer,
-        validateBoard,
-        winningBoards,
-        newBoard,
-    },
+exports.newGame = newGame;
+exports.unit = {
+    doMove,
+    printBoard,
+    isWinningBoard,
+    matchingBoards,
+    normalizeBoardForPlayer,
+    validateBoard,
+    winningBoards,
+    newBoard,
 };
 //# sourceMappingURL=tictactoe.js.map
