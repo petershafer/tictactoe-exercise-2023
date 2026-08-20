@@ -1,6 +1,4 @@
-// const { newGame } = require('./tictactoe');
 import { newGame } from './tictactoe';
-// const { Grid3x3 } = require('./grid');
 import { Grid3x3 } from './grid';
 
 import type {
